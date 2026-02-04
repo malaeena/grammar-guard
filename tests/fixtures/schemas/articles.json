@@ -1,0 +1,30 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 200
+      },
+      "author": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 100
+      },
+      "timestamp": {
+        "type": "string"
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": ["title", "author", "timestamp"]
+  },
+  "minItems": 1,
+  "maxItems": 10
+}

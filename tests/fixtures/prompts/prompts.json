@@ -1,0 +1,17 @@
+{
+  "person": [
+    "Generate a person record for Alice, age 28, living in New York City",
+    "Create a user profile for Bob Smith, 35 years old, residing in San Francisco with hobbies including reading and hiking",
+    "Make a person named Charlie, age 42"
+  ],
+  "articles": [
+    "Generate 3 technology articles with authors and timestamps",
+    "Create a list of 2 news articles about AI",
+    "Generate articles about machine learning with tags"
+  ],
+  "jsonrpc": [
+    "Generate a JSON-RPC call to method 'getUserProfile' with userId parameter",
+    "Create a JSON-RPC request for 'updateSettings' method",
+    "Make a JSON-RPC call to 'getData' with id 123"
+  ]
+}
