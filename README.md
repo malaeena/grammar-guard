@@ -2,13 +2,15 @@
 
 **A lightweight, runtime-agnostic constrained decoding layer for reliable JSON output from LLMs**
 
+> ⚠️ **Work In Progress**: This project is under active development. Expect breaking changes, incomplete features, and bugs.
+
 GrammarGuard ensures that LLM-generated outputs conform to a target JSON schema without relying solely on fragile prompting or extensive post-validation. It uses constrained decoding to mask invalid tokens during generation, guaranteeing structurally valid JSON.
 
 ## Features
 
 - 🎯 **Schema-Driven Generation**: Define JSON schemas and get guaranteed-valid output
 - 🔄 **Automatic Retry with Simplification**: Progressive schema relaxation on validation failures
-- 🍎 **Apple Silicon Optimized**: Native MPS (Metal Performance Shaders) support
+- 🖥️ **Cross-Platform**: Supports MPS (Apple Silicon), CUDA (NVIDIA), and CPU
 - 🔌 **Multiple Backends**: Works with HuggingFace transformers and llama.cpp
 - 📊 **Validation Constraints**: Support for minLength, maxLength, minimum, maximum, enum
 - 🚀 **Performance**: Token-level masking with O(1) lookup, caching for repeated use
@@ -189,11 +191,16 @@ grammar_guard/
 └── api.py            # High-level API
 ```
 
-## Apple Silicon Optimization
+## Device & Hardware Support
 
-GrammarGuard is optimized for Apple Silicon (M1/M2/M3):
+GrammarGuard automatically detects and uses the best available device:
 
-### Transformers Backend
+### Device Priority
+1. **MPS** (Apple Silicon) - if available
+2. **CUDA** (NVIDIA GPU) - if available
+3. **CPU** - always available as fallback
+
+### Apple Silicon (MPS)
 ```python
 # Automatic MPS acceleration
 generator = GrammarConstrainedGenerator(
@@ -203,14 +210,24 @@ generator = GrammarConstrainedGenerator(
 # Uses torch.device("mps") + torch.float16 for efficiency
 ```
 
-### llama.cpp Backend
+### NVIDIA GPU (CUDA)
 ```python
-# Full Metal acceleration
+# CUDA acceleration
 generator = GrammarConstrainedGenerator(
-    "model.gguf",
-    backend="llamacpp"
+    "gpt2",
+    device="cuda"  # NVIDIA GPU
 )
-# Automatically uses n_gpu_layers=-1 (all layers on Metal)
+# Works on Linux/Windows with CUDA-capable GPUs
+```
+
+### CPU (Universal)
+```python
+# CPU fallback (works everywhere)
+generator = GrammarConstrainedGenerator(
+    "gpt2",
+    device="cpu"
+)
+# Or device=None for auto-detection
 ```
 
 ## Performance
@@ -326,9 +343,11 @@ result = generator.generate(
 
 ## Troubleshooting
 
-### Model Not Loading on Apple Silicon
-- Ensure PyTorch has MPS support: `torch.backends.mps.is_available()`
-- Install latest PyTorch: `pip install --upgrade torch`
+### Device Detection Issues
+- **Apple Silicon**: Ensure PyTorch has MPS support: `torch.backends.mps.is_available()`
+- **NVIDIA GPU**: Check CUDA availability: `torch.cuda.is_available()`
+- **Any platform**: Install latest PyTorch: `pip install --upgrade torch`
+- Use `device="cpu"` as fallback if GPU detection fails
 
 ### Slow First Generation
 - This is normal - building the token index takes time
